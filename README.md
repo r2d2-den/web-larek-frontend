@@ -48,8 +48,6 @@ yarn build
 
 ## Данные и их типы, используемые в приложении.
 
-![UML](https://github.com/r2d2-den/web-larek-frontend/blob/main/UML.png)
-
 ### Список продуктов
 Данные о списке продуктов, загружаемых с сервера и доступных для пользователей, описываются следующим интерфейсом:
 ```typescript
@@ -122,6 +120,8 @@ yarn build
 type TypeApiPayment = 'cash' | 'online';
 ```
 ## Архитектура приложения
+
+![UML](https://github.com/r2d2-den/web-larek-frontend/blob/main/UML.png)
 
 Код приложения разделен на слои согласно парадигме MVP:
 - слой данных, отвечает за хранение и изменение данных;
