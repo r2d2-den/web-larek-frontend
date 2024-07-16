@@ -46,9 +46,9 @@ npm run build
 yarn build
 ```
 
-![UML](https://github.com/r2d2-den/web-larek-frontend/blob/main/UML.png)
-
 ## Данные и их типы, используемые в приложении.
+
+![UML](https://github.com/r2d2-den/web-larek-frontend/blob/main/UML.png)
 
 ### Список продуктов
 Данные о списке продуктов, загружаемых с сервера и доступных для пользователей, описываются следующим интерфейсом:
