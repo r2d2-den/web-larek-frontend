@@ -45,6 +45,9 @@ npm run build
 ```
 yarn build
 ```
+
+![UML](https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Markdown-mark.svg/1920px-Markdown-mark.svg.png "Логотип Markdown")
+
 ## Данные и их типы, используемые в приложении.
 
 ### Список продуктов
