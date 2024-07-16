@@ -46,7 +46,7 @@ npm run build
 yarn build
 ```
 
-![UML](https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Markdown-mark.svg/1920px-Markdown-mark.svg.png "Логотип Markdown")
+![UML](https://github.com/r2d2-den/web-larek-frontend/blob/main/UML.png)
 
 ## Данные и их типы, используемые в приложении.
 
