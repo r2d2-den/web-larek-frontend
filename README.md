@@ -222,7 +222,7 @@ type IServerData = {
 - слой коммуникации, отвечает за связь представления и данных.
 
 
-[Диаграмма UML классов](path/to/class_diagram.png)
+![Диаграмма UML классов](https://github.com/r2d2-den/web-larek-frontend/blob/main/class_diagram.png)
 
 
 ### Расширения классов
