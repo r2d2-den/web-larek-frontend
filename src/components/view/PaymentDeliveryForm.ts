@@ -11,17 +11,24 @@ export class PaymentDeliveryForm extends Form<TOrderForm> {
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this._paymentCard = ensureElement<HTMLButtonElement>('.button_alt[name=card]', this.container);
-		this._paymentCash = ensureElement<HTMLButtonElement>('.button_alt[name=cash]', this.container);
-		this._address = ensureElement<HTMLInputElement>('.form__input[name=address]', this.container);
+		this._paymentCard = ensureElement<HTMLButtonElement>(
+			'.button_alt[name=card]',
+			this.container
+		);
+		this._paymentCash = ensureElement<HTMLButtonElement>(
+			'.button_alt[name=cash]',
+			this.container
+		);
+		this._address = ensureElement<HTMLInputElement>(
+			'.form__input[name=address]',
+			this.container
+		);
 
 		this._paymentCard.addEventListener('click', () => {
-			this.payment = 'card';
-			this.onInputChange('payment', 'card');
+			this.events.emit('payment:select', { paymentMethod: 'card' });
 		});
 		this._paymentCash.addEventListener('click', () => {
-			this.payment = 'cash';
-			this.onInputChange('payment', 'cash');
+			this.events.emit('payment:select', { paymentMethod: 'cash' });
 		});
 	}
 
@@ -34,4 +41,3 @@ export class PaymentDeliveryForm extends Form<TOrderForm> {
 		this._address.value = value;
 	}
 }
-

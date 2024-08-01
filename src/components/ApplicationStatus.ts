@@ -1,110 +1,110 @@
-import { IProduct, IOrderModel, TUserInfo, IAppInfo } from '../types';
-import { validateOrderPayment, validateOrderAddress, validateOrderEmail, validateOrderPhone } from './Validation';
+import { IProduct, IOrder, TUserInfo, IAppInfo } from '../types';
+import {
+	validateOrderPayment,
+	validateOrderAddress,
+	validateOrderEmail,
+	validateOrderPhone,
+} from './Validation';
 import { IEvents } from './base/events';
 
 export class ApplicationStatus {
-    catalog: IProduct[] = [];
-    basket: IProduct[] = [];
-    order: IOrderModel = {
-        email: '',
-        phone: '',
-        payment: '',
-        address: '',
-        items: [],
-        total: 0,
-        valid: false,
-        errors: [],
-        contactInfo: undefined
-    };
-    orderErrors: Partial<Record<keyof TUserInfo, string>> = {};
-    preview: IProduct | null = null;
-    isOrderValid: boolean = false;
-    contactErrors: Partial<Record<'email' | 'phone', string>> = {};
+	catalog: IProduct[] = [];
+	basket: IProduct[] = [];
+	order: Omit<IOrder, 'items' | 'total'> = {
+		email: '',
+		phone: '',
+		payment: '',
+		address: '',
+	};
 
-    constructor(data: Partial<IAppInfo>, protected events: IEvents) {
-        Object.assign(this, data);
-    }
+	orderErrors: Partial<Record<'payment' | 'address', string>> = {};
+	preview: IProduct | null = null;
+	isOrderValid: boolean = false;
+	contactErrors: Partial<Record<'email' | 'phone', string>> = {};
 
-    setProductList(items: IProduct[]) {
-        this.catalog = items;
-        this.emitChanges('items:changed', { catalog: this.catalog });
-    }
+	constructor(data: Partial<IAppInfo>, protected events: IEvents) {
+		Object.assign(this, data);
+	}
 
-    addToBasket(item: IProduct): void {
-        this.basket.push(item);
-        this.emitChanges('basket:changed', this.basket);
-    }
+	setProductList(items: IProduct[]) {
+		this.catalog = items;
+		this.emitChanges('items:changed', { catalog: this.catalog });
+	}
 
-    deleteFromBasket(item: IProduct) {
-        this.basket = this.basket.filter((basketItem) => basketItem.id !== item.id);
-        this.emitChanges('basket:changed', this.basket);
-    }
+	addToBasket(item: IProduct): void {
+		this.basket.push(item);
+		this.emitChanges('basket:changed', this.basket);
+	}
 
-    isInBasket(item: IProduct) {
-        return this.basket.some((basketItem) => basketItem.id === item.id);
-    }
+	deleteFromBasket(item: IProduct) {
+		this.basket = this.basket.filter((basketItem) => basketItem.id !== item.id);
+		this.emitChanges('basket:changed', this.basket);
+	}
 
-    getBasketId() {
-        return this.basket.map((item) => item.id);
-    }
+	isInBasket(item: IProduct) {
+		return this.basket.some((basketItem) => basketItem.id === item.id);
+	}
 
-    getNumberBasket(): number {
-        return this.basket.length;
-    }
+	getBasketId() {
+		return this.basket.map((item) => item.id);
+	}
 
-    getTotalBasket(): number {
-        return this.basket.reduce((total, item) => total + (item.price || 0), 0);
-    }
+	getNumberBasket(): number {
+		return this.basket.length;
+	}
 
-    cleanBasket() {
-        this.basket = [];
-        this.emitChanges('basket:changed', this.basket);
-    }
+	getTotalBasket(): number {
+		return this.basket.reduce((total, item) => total + (item.price || 0), 0);
+	}
 
-    setField(field: keyof TUserInfo, value: string) {
-        this.order[field] = value;
-        this.validateOrder(); // Validate on field change
-    }
+	cleanBasket() {
+		this.basket = [];
+		this.emitChanges('basket:changed', this.basket);
+	}
 
-    validateOrder(): void {
-        const orderErrors: Partial<Record<'payment' | 'address', string>> = {};
-        const contactErrors: Partial<Record<'email' | 'phone', string>> = {};
+	setField(field: keyof TUserInfo, value: string) {
+		if (field in this.order) {
+			this.order[field] = value;
+			console.log(this.order[field]);
+			this.validateOrder();
+		}
+	}
 
-        // Validate order-related fields
-        const paymentError = validateOrderPayment(this.order.payment);
-        if (paymentError) {
-            orderErrors.payment = paymentError;
-        }
+	validateOrder(): void {
+		const orderErrors: Partial<Record<'payment' | 'address', string>> = {};
+		const contactErrors: Partial<Record<'email' | 'phone', string>> = {};
 
-        const addressError = validateOrderAddress(this.order.address);
-        if (addressError) {
-            orderErrors.address = addressError;
-        }
+		const paymentError = validateOrderPayment(this.order.payment || '');
+		if (paymentError) {
+			orderErrors.payment = paymentError;
+		}
 
-        // Validate contact-related fields
-        const emailError = validateOrderEmail(this.order.email);
-        if (emailError) {
-            contactErrors.email = emailError;
-        }
+		const addressError = validateOrderAddress(this.order.address || '');
+		if (addressError) {
+			orderErrors.address = addressError;
+		}
 
-        const phoneError = validateOrderPhone(this.order.phone);
-        if (phoneError) {
-            contactErrors.phone = phoneError;
-        }
+		const emailError = validateOrderEmail(this.order.email || '');
+		if (emailError) {
+			contactErrors.email = emailError;
+		}
 
-        // Update state and emit events
-        this.orderErrors = orderErrors;
-        this.contactErrors = contactErrors;
-        this.events.emit('formErrors:change', { orderErrors, contactErrors });
-    }
+		const phoneError = validateOrderPhone(this.order.phone || '');
+		if (phoneError) {
+			contactErrors.phone = phoneError;
+		}
 
-    setPreview(item: IProduct) {
-        this.preview = item;
-        this.events.emit('preview:change', this.preview);
-    }
+		this.orderErrors = orderErrors;
+		this.contactErrors = contactErrors;
+		this.events.emit('formErrors:change', { orderErrors, contactErrors });
+	}
 
-    private emitChanges(event: string, payload?: object): void {
-        this.events.emit(event, payload ?? {});
-    }
+	setPreview(item: IProduct) {
+		this.preview = item;
+		this.events.emit('preview:change', this.preview);
+	}
+
+	private emitChanges(event: string, payload?: object): void {
+		this.events.emit(event, payload ?? {});
+	}
 }
-

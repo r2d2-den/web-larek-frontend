@@ -10,8 +10,14 @@ export class ContactsInfoForm extends Form<TContactsForm> {
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this._email = ensureElement<HTMLInputElement>('.form__input[name=email]', this.container);
-		this._phone = ensureElement<HTMLInputElement>('.form__input[name=phone]', this.container);
+		this._email = ensureElement<HTMLInputElement>(
+			'.form__input[name=email]',
+			this.container
+		);
+		this._phone = ensureElement<HTMLInputElement>(
+			'.form__input[name=phone]',
+			this.container
+		);
 	}
 
 	set email(value: string) {
@@ -26,4 +32,3 @@ export class ContactsInfoForm extends Form<TContactsForm> {
 		this.errors = errors;
 	}
 }
-

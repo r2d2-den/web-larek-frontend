@@ -1,43 +1,46 @@
 export abstract class Component<T> {
-	protected constructor(protected readonly container: HTMLElement) {
-	}
+	protected constructor(protected readonly container: HTMLElement) {}
 
 	/** Переключить класс */
-	protected toggleClass(element: HTMLElement, className: string, force?: boolean) {
-			element.classList.toggle(className, force);
+	protected toggleClass(
+		element: HTMLElement,
+		className: string,
+		force?: boolean
+	) {
+		element.classList.toggle(className, force);
 	}
 
 	/** Установить текст для элемента */
 	protected setText(element: HTMLElement, value: unknown) {
-			if (element) {
-					element.textContent = String(value);
-			}
+		if (element) {
+			element.textContent = String(value);
+		}
 	}
 
 	/** Установить картинку для элемента */
 	protected setImage(element: HTMLImageElement, src: string, alt?: string) {
-			if (element) {
-					element.src = src;
-					if (alt) {
-							element.alt = alt;
-					}
+		if (element) {
+			element.src = src;
+			if (alt) {
+				element.alt = alt;
 			}
+		}
 	}
 
 	/** Сменить статус блокировки */
 	protected setDisabled(element: HTMLElement, state: boolean) {
-			if (element) {
-					if (state) {
-							element.setAttribute('disabled', 'disabled');
-					} else {
-							element.removeAttribute('disabled');
-					}
+		if (element) {
+			if (state) {
+				element.setAttribute('disabled', 'disabled');
+			} else {
+				element.removeAttribute('disabled');
 			}
+		}
 	}
 
 	/** Обновить свойства класса и вернуть корневой элемент */
 	render(data?: Partial<T>): HTMLElement {
-			Object.assign(this as object, data ?? {});
-			return this.container;
+		Object.assign(this as object, data ?? {});
+		return this.container;
 	}
 }

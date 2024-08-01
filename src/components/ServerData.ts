@@ -1,5 +1,12 @@
 import { Api, ApiListResponse } from '../components/base/api';
-import { IProduct, IProductResponse, IOrderResult, IOrder, TUserInfo, IServerData } from '../types';
+import {
+	IProduct,
+	IProductResponse,
+	IOrderResult,
+	IOrder,
+	TUserInfo,
+	IServerData,
+} from '../types';
 
 export class ServerData extends Api implements IServerData {
 	private cdn: string;
@@ -14,7 +21,7 @@ export class ServerData extends Api implements IServerData {
 	getProductList(): Promise<IProductResponse> {
 		return this.get('/product').then((data: ApiListResponse<IProduct>) => ({
 			total: data.total,
-			items: data.items.map(item => ({
+			items: data.items.map((item) => ({
 				...item,
 				image: `${this.cdn}${item.image}`,
 			})),
@@ -28,12 +35,12 @@ export class ServerData extends Api implements IServerData {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(contactData),
-		}).then(response => response.json());
+		}).then((response) => response.json());
 	}
 
 	postOrder(orderData: IOrder): Promise<IOrderResult> {
-		return this.post(`/order`, orderData).then((orderResult: IOrderResult) => orderResult);
+		return this.post(`/order`, orderData).then(
+			(orderResult: IOrderResult) => orderResult
+		);
 	}
 }
-
-

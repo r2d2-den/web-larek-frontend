@@ -1,7 +1,7 @@
 import { Component } from '../base/component';
 import { IEvents } from '../base/events';
 import { ensureElement } from '../../utils/utils';
-import { IOrder} from '../../types';
+import { IOrder } from '../../types';
 
 export class Form<T> extends Component<IOrder> {
 	protected submitButton: HTMLButtonElement;
@@ -13,9 +13,12 @@ export class Form<T> extends Component<IOrder> {
 
 		this.submitButton = ensureElement<HTMLButtonElement>(
 			'button[type=submit]',
-			this.container,
+			this.container
 		);
-		this.contentError = ensureElement<HTMLElement>('.form__errors', this.container);
+		this.contentError = ensureElement<HTMLElement>(
+			'.form__errors',
+			this.container
+		);
 
 		this.container.addEventListener('input', (event: Event) => {
 			const target = event.target as HTMLInputElement;

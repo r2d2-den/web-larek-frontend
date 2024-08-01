@@ -9,12 +9,20 @@ export class Modal extends Component<HTMLElement> {
 	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container);
 
-		this.closeButtonElement = ensureElement<HTMLButtonElement>('.modal__close', container);
-		this.contentElement = ensureElement<HTMLElement>('.modal__content', container);
+		this.closeButtonElement = ensureElement<HTMLButtonElement>(
+			'.modal__close',
+			container
+		);
+		this.contentElement = ensureElement<HTMLElement>(
+			'.modal__content',
+			container
+		);
 
 		this.container.addEventListener('click', this.close.bind(this));
 		this.closeButtonElement.addEventListener('click', this.close.bind(this));
-		this.contentElement.addEventListener('click', (event) => event.stopPropagation());
+		this.contentElement.addEventListener('click', (event) =>
+			event.stopPropagation()
+		);
 	}
 
 	set content(value: HTMLElement | null) {

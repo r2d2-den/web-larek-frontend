@@ -8,6 +8,7 @@ export interface IProduct {
 	title: string;
 	category: string;
 	price: number | null;
+	indexElement: number;
 }
 
 // Интерфейс для ответа от сервера, содержащего список продуктов
@@ -36,23 +37,19 @@ export interface IOrder {
 	total: number;
 }
 
-// Расширенный интерфейс для заказа с дополнительными полями валидации
-export interface IOrderModel extends IOrder {
-	valid: boolean;
-	errors: IFormError[];
-	contactInfo: TUserInfo | undefined;
-}
-
 // Интерфейс для результата заказа
 export interface IOrderResult {
 	id: string;
 	total: number;
 }
 
-// --- Утилитарные типы ---
+// Интерфейс для формы заказа (только payment и address)
+export interface TOrderForm {
+	payment: 'card' | 'cash';
+	address: string;
+}
 
-// Тип для формы заказа (только payment и address)
-export type TOrderForm = Pick<IOrder, 'payment' | 'address'>;
+// --- Утилитарные типы ---
 
 // Тип для формы контактов (только email и phone)
 export type TContactsForm = Pick<IOrder, 'email' | 'phone'>;
