@@ -1,114 +1,111 @@
 // --- Продукты ---
 
-// Интерфейс для продукта
+/**
+ * Интерфейс для описания продукта.
+ */
 export interface IProduct {
-	id: string;
-	description: string;
-	image: string;
-	title: string;
-	category: string;
-	price: number | null;
-	indexElement: number;
-}
-
-// Интерфейс для ответа от сервера, содержащего список продуктов
-export interface IProductResponse {
-	total: number;
-	items: IProduct[];
+	id: string;             // Уникальный идентификатор продукта
+	description: string;    // Описание продукта
+	image: string;          // URL изображения продукта
+	title: string;          // Название продукта
+	category: string;       // Категория продукта
+	price: number | null;   // Цена продукта (может быть null, если цена не установлена)
+	indexElement: number;   // Индекс элемента в списке
 }
 
 // --- Корзина ---
 
-// Интерфейс для корзины покупок
+/**
+ * Интерфейс для корзины покупок.
+ */
 export interface IBasket {
-	items: string[];
-	total: number;
+	items: string[];        // Массив идентификаторов товаров в корзине
+	total: number;         // Общая стоимость товаров в корзине
 }
 
 // --- Заказы ---
 
-// Интерфейс для заказа
+/**
+ * Интерфейс для описания заказа.
+ */
 export interface IOrder {
-	payment: string;
-	email: string;
-	phone: string;
-	address: string;
-	items: string[];
-	total: number;
+	payment: string;        // Метод оплаты (например, 'cash' или 'online')
+	email: string;          // Email клиента
+	phone: string;          // Телефон клиента
+	address: string;        // Адрес доставки
+	items: string[];        // Массив идентификаторов товаров в заказе
+	total: number;         // Общая стоимость заказа
 }
 
-// Интерфейс для результата заказа
+/**
+ * Интерфейс для результата размещения заказа.
+ */
 export interface IOrderResult {
-	id: string;
-	total: number;
-}
-
-// Интерфейс для формы заказа (только payment и address)
-export interface TOrderForm {
-	payment: 'card' | 'cash';
-	address: string;
+	id: string;            // Уникальный идентификатор заказа
+	total: number;         // Общая стоимость заказа
 }
 
 // --- Утилитарные типы ---
 
-// Тип для формы контактов (только email и phone)
-export type TContactsForm = Pick<IOrder, 'email' | 'phone'>;
-
-// Тип для информации о пользователе (объединение контактных и платежных данных)
-export type TUserInfo = Pick<IOrder, 'email' | 'phone' | 'address' | 'payment'>;
-
-// --- Ошибки форм ---
-
-// Интерфейс для ошибок формы
-export interface IFormError {
-	field: string;
-	message: string;
-	address?: string;
-	email?: string;
-	phone?: string;
-	payment?: string;
+/**
+ * Перечисление возможных методов оплаты.
+ */
+export enum EnumDeliveryFormMethod {
+	cash = 'cash',         // Оплата наличными
+	online = 'online'      // Онлайн-оплата
 }
 
-// --- Информация о приложении ---
-
-// Тип для информации о состоянии приложения
-export type IAppInfo = {
-	catalog: IProduct[];
-	basket: IBasket;
-	order: Partial<TUserInfo>;
-	formError: Partial<IFormError>;
-};
+/**
+ * Тип для формы заказа без полей `total` и `items`.
+ */
+export type OrderForm = Omit<IOrder, 'total' | 'items'>;
 
 // --- Представления и действия ---
 
-// Тип для действий с продуктом
-export type TProductActions = {
-	onClick: (event: MouseEvent) => void;
+/**
+ * Тип для действий, связанных с элементами интерфейса.
+ */
+export type TActions = {
+	onClick?: () => void;  // Функция, вызываемая при клике на элемент
 };
 
-// Тип для главной страницы
-export type TMainPage = {
-	counter: number;
-	catalog: HTMLElement[];
-	locked: boolean;
+/**
+ * Тип для ответа API со списком элементов.
+ * @param Type - Тип элемента в списке.
+ */
+export type ApiListResponse<Type> = {
+	total: number;         // Общее количество элементов
+	items: Type[];         // Массив элементов
 };
 
-// Тип для представления корзины
-export type TBasketView = {
-	items: HTMLElement[];
-	total: number;
-};
-
-// Тип для действий после успешного выполнения заказа
-export type TSuccessActions = {
-	onClick?: () => void;
-};
+/**
+ * Тип для методов POST запросов.
+ */
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 // --- Данные сервера ---
 
-// Типы для данных, получаемых от сервера
+/**
+ * Интерфейс для работы с данными сервера.
+ */
 export type IServerData = {
-	getProductList: () => Promise<IProductResponse>;
-	submitContactInfo: (contactData: TUserInfo) => Promise<IOrderResult>;
+	/**
+	 * Получение списка продуктов.
+	 * @returns Промис с ответом, содержащим список продуктов.
+	 */
+	getProductList: () => Promise<ApiListResponse<IProduct>>;
+
+	/**
+	 * Отправка контактной информации.
+	 * @param contactData - Данные контактной формы.
+	 * @returns Промис с результатом размещения заказа.
+	 */
+	submitContactInfo: (contactData: OrderForm) => Promise<IOrderResult>;
+
+	/**
+	 * Размещение заказа.
+	 * @param orderData - Данные заказа.
+	 * @returns Промис с результатом размещения заказа.
+	 */
 	postOrder: (orderData: IOrder) => Promise<IOrderResult>;
 };

@@ -53,23 +53,16 @@ yarn build
 
 - Интерфейс для продукта
 ```typescript
- interface IProduct {
-	id: string;
-	description: string;
-	image: string;
-	title: string;
-	category: string;
-	price: number | null;
+interface IProduct {
+	id: string;             // Уникальный идентификатор продукта
+	description: string;    // Описание продукта
+	image: string;          // URL изображения продукта
+	title: string;          // Название продукта
+	category: string;       // Категория продукта
+	price: number | null;   // Цена продукта (может быть null, если цена не установлена)
+	indexElement: number;   // Индекс элемента в списке
 }
-```
 
-
- - Интерфейс для ответа от сервера, содержащего список продуктов
-```typescript
- interface IProductResponse {
-	total: number;
-	items: IProduct[];
-}
 ```
 
 
@@ -78,8 +71,8 @@ yarn build
  - Интерфейс для корзины покупок
 ```typescript
 interface IBasket {
-	items: string[];
-	total: number;
+	items: string[];        // Массив идентификаторов товаров в корзине
+	total: number;         // Общая стоимость товаров в корзине
 }
 ```
 
@@ -89,118 +82,84 @@ interface IBasket {
 - Интерфейс для заказа
 ```typescript
 interface IOrder {
-	payment: string;
-	email: string;
-	phone: string;
-	address: string;
-	items: string[];
-	total: number;
+	payment: string;        // Метод оплаты (например, 'cash' или 'online')
+	email: string;          // Email клиента
+	phone: string;          // Телефон клиента
+	address: string;        // Адрес доставки
+	items: string[];        // Массив идентификаторов товаров в заказе
+	total: number;         // Общая стоимость заказа
 }
+
 ```
 
 - Интерфейс для результата заказа
 ```typescript
 interface IOrderResult {
-	id: string;
-	total: number;
-}
-```
-
--  Интерфейс для формы заказа (только payment и address)
-```typescript
-export interface TOrderForm {
-	payment: 'card' | 'cash';
-	address: string;
+	id: string;            // Уникальный идентификатор заказа
+	total: number;         // Общая стоимость заказа
 }
 ```
 
 ### Утилитарные типы
 
 
--  Тип для формы контактов (только email и phone)
+-  Перечисление возможных методов оплаты
 ```typescript
-type TContactsForm = Pick<IOrder, 'email' | 'phone'>
+enum EnumDeliveryFormMethod {
+	cash = 'cash',         // Оплата наличными
+	online = 'online'      // Онлайн-оплата
+}
 ``` 
 
 
 -  Тип для информации о пользователе (объединение контактных и платежных данных)
 ```typescript
-type TUserInfo = Pick<IOrder, 'email' | 'phone' | 'address' | 'payment'>
+type OrderForm = Omit<IOrder, 'total' | 'items'>;
 ```
 
-
-
-### Ошибки форм
-
--  Интерфейс для ошибок формы
-```typescript
-interface IFormError {
-	field: string;
-	message: string;
-	address?: string;
-	email?: string;
-	phone?: string;
-	payment?: string;
-}
-```
-
-
-### Информация о приложении
-
-- Тип для информации о состоянии приложения
-
-```typescript
-type IAppInfo = {
-	catalog: IProduct[];
-	basket: IBasket;
-	order: Partial<TUserInfo>;
-	formError: Partial<IFormError>;
-}
-```
 
 ### Представления и действия
 
-- Тип для действий с продуктом
+- Тип для действий, связанных с элементами интерфейса
 
 ```typescript
-type TProductActions = {
-	onClick: (event: MouseEvent) => void
-}
+type TActions = {
+	onClick?: () => void;  // Функция, вызываемая при клике на элемент
+};
 ```
 
-- Тип для главной страницы
+- Тип для методов запросов
 ```typescript
-type TMainPage = {
-	counter: number;
-	catalog: HTMLElement[];
-	locked: boolean;
-}
-```
+type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
-- Тип для представления корзины
-```typescript
-type TBasketView = {
-	items: HTMLElement[];
-	total: number;
-}
-```
-
-- Тип для действий после успешного выполнения заказа
-```typescript
-type TSuccessActions = {
-	onClick?: () => void;
-}
 ```
 
 ### Данные сервера
 
-- Типы для данных, получаемых от сервера
+- Интерфейс для работы с данными сервера
 ```typescript
 type IServerData = {
-	getProductList: () => Promise<IProductResponse>;
-	submitContactInfo: (contactData: TUserInfo) => Promise<IOrderResult>;
+	/**
+	 * Получение списка продуктов.
+	 * @returns Промис с ответом, содержащим список продуктов.
+	 */
+	getProductList: () => Promise<ApiListResponse<IProduct>>;
+
+	/**
+	 * Отправка контактной информации.
+	 * @param contactData - Данные контактной формы.
+	 * @returns Промис с результатом размещения заказа.
+	 */
+	submitContactInfo: (contactData: OrderForm) => Promise<IOrderResult>;
+
+	/**
+	 * Размещение заказа.
+	 * @param orderData - Данные заказа.
+	 * @returns Промис с результатом размещения заказа.
+	 */
 	postOrder: (orderData: IOrder) => Promise<IOrderResult>;
-}
+};
+
 ```
 
 
@@ -243,6 +202,40 @@ type IServerData = {
 
 ### Базовый код
 ---
+
+
+
+## Api
+
+### Свойства
+
+| Свойство | Тип           | Описание                                               |
+|----------|---------------|--------------------------------------------------------|
+| `baseUrl` | `string`      | Базовый URL для запросов. Устанавливается при инициализации объекта класса. |
+| `options` | `RequestInit` | Опции для инициализации запросов, такие как заголовки и другие параметры. Устанавливаются при инициализации объекта класса. |
+
+### Конструктор
+
+| Метод         | Параметры                                 | Описание                                                     |
+|---------------|-------------------------------------------|--------------------------------------------------------------|
+| `constructor` | `baseUrl: string`, `options: RequestInit = {}` | Инициализирует объект класса `Api`. Устанавливает базовый URL и опции для запросов. |
+
+### Методы
+
+| Метод             | Параметры                                 | Описание                                                     |
+|-------------------|-------------------------------------------|--------------------------------------------------------------|
+| `handleResponse`  | `response: Response`                      | Обрабатывает ответ от сервера. Возвращает данные в формате JSON или ошибку. |
+| `get`             | `uri: string`                             | Выполняет GET-запрос по указанному пути. Возвращает ответ от сервера. |
+| `post`            | `uri: string`, `data: object`, `method: ApiPostMethods = 'POST'` | Выполняет POST-запрос или другой метод, указанный в `ApiPostMethods`. Отправляет данные и возвращает ответ от сервера. |
+
+
+
+
+
+
+
+
+
 ### Класс `Api`
 Класс `Api` представляет собой обертку для выполнения HTTP-запросов к API.
 

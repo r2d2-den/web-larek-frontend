@@ -30,6 +30,8 @@ export class EventEmitter implements IEvents {
 
 	/**
 	 * Установить обработчик на событие
+	 * @param eventName - Имя события или регулярное выражение для событий.
+	 * @param callback - Функция-обработчик, вызываемая при возникновении события.
 	 */
 	on<T extends object>(eventName: EventName, callback: (event: T) => void) {
 		if (!this._events.has(eventName)) {
@@ -40,6 +42,8 @@ export class EventEmitter implements IEvents {
 
 	/**
 	 * Снять обработчик с события
+	 * @param eventName - Имя события или регулярное выражение для событий.
+	 * @param callback - Функция-обработчик, которая будет удалена.
 	 */
 	off(eventName: EventName, callback: Subscriber) {
 		if (this._events.has(eventName)) {
@@ -52,6 +56,8 @@ export class EventEmitter implements IEvents {
 
 	/**
 	 * Инициировать событие с данными
+	 * @param eventName - Имя события.
+	 * @param data - Данные, передаваемые обработчикам события.
 	 */
 	emit<T extends object>(eventName: string, data?: T) {
 		this._events.forEach((subscribers, name) => {
@@ -66,6 +72,7 @@ export class EventEmitter implements IEvents {
 
 	/**
 	 * Слушать все события
+	 * @param callback - Функция-обработчик, вызываемая при любом событии.
 	 */
 	onAll(callback: (event: EmitterEvent) => void) {
 		this.on('*', callback);
@@ -79,7 +86,10 @@ export class EventEmitter implements IEvents {
 	}
 
 	/**
-	 * Сделать коллбек триггер, генерирующий событие при вызове
+	 * Сделать коллбек триггером, генерирующим событие при вызове
+	 * @param eventName - Имя события.
+	 * @param context - Дополнительный контекст, передаваемый при возникновении события.
+	 * @returns Функция, генерирующая событие при вызове.
 	 */
 	trigger<T extends object>(eventName: string, context?: Partial<T>) {
 		return (event: object = {}) => {
@@ -90,3 +100,4 @@ export class EventEmitter implements IEvents {
 		};
 	}
 }
+
